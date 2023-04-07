@@ -8,6 +8,14 @@ orbs:
 
 #jobs
 jobs:
+  build-and-test:
+    executor: 
+      name: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run: 
+        command: npm run test
   migrations:
     - run:
         name: Run migration
@@ -17,10 +25,10 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+  build-and-test: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:        
-      - node/test:
+      - build-and-test:
           # This is the node version to use for the `cimg/node` tag
           # Relevant tags can be found on the CircleCI Developer Hub
           # https://circleci.com/developer/images/image/cimg/node
