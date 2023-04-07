@@ -36,4 +36,9 @@ workflows:
           version: '18.15'
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
-      - migrations
+      - migrations:
+          requires: 
+            - node/test
+          filters:
+            branches:
+              only: main # only deploy when on main
