@@ -3,24 +3,29 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
+import { DataSource } from 'typeorm';
 
 // test comment
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       url: `${process.env.POSTGRES_URL}`,
       username: `${process.env.POSTGRES_USER}`,
       password: `${process.env.POSTGRES_PASSWORD}`,
       database: `${process.env.POSTGRES_DB}`,
-      entities: [User],
+      entities: ['dist/**/*.entity.js'],
+      migrations: ['dist/db/migrations/*.js'],
     }),
     UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}
