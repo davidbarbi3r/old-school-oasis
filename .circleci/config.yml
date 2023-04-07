@@ -6,21 +6,23 @@ version: 2.1
 orbs:
   node: circleci/node@4.7
 
-executors:
-  my-custom-executor:
-    docker:
-      - image: cimg/base:stable
-        # auth:
-        #   # ensure you have first added these secrets
-        #   # visit app.circleci.com/settings/project/github/davidbarbi3r/old-school-oasis/environment-variables
-        #   username: $DOCKER_HUB_USER
-        #   password: $DOCKER_HUB_PASSWORD
+# executors:
+#   my-custom-executor:
+#     docker:
+#       - image: cimg/base:stable
+#         # auth:
+#         #   # ensure you have first added these secrets
+#         #   # visit app.circleci.com/settings/project/github/davidbarbi3r/old-school-oasis/environment-variables
+#         #   username: $DOCKER_HUB_USER
+#         #   password: $DOCKER_HUB_PASSWORD
 
 jobs:
   migrations:
-    executor: my-custom-executor
+    executor: node/default 
     steps:
       - checkout
+      - node/install-packages:
+          pkg-manager: npm
       - run: |
           npm run migration:run
 # Invoke jobs via workflows
@@ -39,6 +41,6 @@ workflows:
       - migrations:
           requires: 
             - node/test
-          filters:
-            branches:
-              only: master # only deploy when on master
+          # filters:
+          #   branches:
+          #     only: master # only deploy when on master
