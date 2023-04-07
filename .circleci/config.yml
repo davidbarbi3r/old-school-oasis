@@ -6,34 +6,34 @@ version: 2.1
 orbs:
   node: circleci/node@4.7
 
-#jobs
+executors:
+  my-custom-executor:
+    docker:
+      - image: cimg/base:stable
+        auth:
+          # ensure you have first added these secrets
+          # visit app.circleci.com/settings/project/github/davidbarbi3r/old-school-oasis/environment-variables
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
+
 jobs:
-  build-and-test:
-    executor: 
-      name: node/default
+  migrations:
+    executor: my-custom-executor
     steps:
       - checkout
-      - node/install-packages
-      - run: 
-          command: npm run test
-  migrations:
-    executor: 
-      name: node/default
-    steps: 
-      - run:
-          name: Run migration
-          command: npm run migration:run
-
+      - run: |
+          # npm run migration:run
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-and-test: # This is the name of the workflow, feel free to change it to better match your workflow.
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
-    jobs:        
-      - build-and-test
-      - migrations:
-          requires: 
-            - build-and-test
-          filters:
-            branches: 
-              only: main
+    jobs:
+      - node/test:
+          # This is the node version to use for the `cimg/node` tag
+          # Relevant tags can be found on the CircleCI Developer Hub
+          # https://circleci.com/developer/images/image/cimg/node
+          version: '18.15'
+          # If you are using yarn, change the line below from "npm" to "yarn"
+          pkg-manager: npm
+      - migrations
