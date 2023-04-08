@@ -24,6 +24,7 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run: |
+          npm install
           npm run migration:run
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
