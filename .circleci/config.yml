@@ -6,10 +6,10 @@ version: 2.1
 orbs:
   node: circleci/node@4.7
 
-# executors:
-#   my-custom-executor:
-#     docker:
-#       - image: cimg/base:stable
+executors:
+  my-custom-executor:
+    docker:
+      - image: cimg/base:stable
 #         # auth:
 #         #   # ensure you have first added these secrets
 #         #   # visit app.circleci.com/settings/project/github/davidbarbi3r/old-school-oasis/environment-variables
@@ -18,7 +18,7 @@ orbs:
 
 jobs:
   migrations:
-    executor: node/default 
+    executor: my-custom-executor
     steps:
       - checkout
       - node/install-packages:
