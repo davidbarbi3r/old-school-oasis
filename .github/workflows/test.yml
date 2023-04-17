@@ -11,4 +11,8 @@ jobs:
         run: npm install
       - name: run tests
         run: npm test
-
+    env:
+      - POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+      - POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      - POSTGRES_DB: ${{secrets.POSTGRES_DB}}
+      - POSTGRES_URL: ${{secrets.POSTGRES_URL}}
