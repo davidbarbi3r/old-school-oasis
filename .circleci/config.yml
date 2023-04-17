@@ -4,7 +4,17 @@ version: 2.1
 # Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
-  node: circleci/node@4.7
+  node: circleci/node@4.7  
+jobs: 
+  build-test-migrate:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - node/test
+      - node/run:
+          npm-run:
+            migration:run
 
 workflows:
   build-test-migrate: # This is the name of the workflow, feel free to change it to better match your workflow.
@@ -18,7 +28,8 @@ workflows:
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
       - node/run:
-          npm-run: migration:run
+          npm-run:
+            migration:run
           requires: 
             - node/test
           # filters:
