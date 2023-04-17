@@ -27,9 +27,7 @@ workflows:
           version: '18.15'
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
-      - node/run:
-          npm-run:
-            migration:run
+      - build-test-migrate:
           requires: 
             - node/test
           # filters:
