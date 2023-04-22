@@ -12,6 +12,7 @@ jobs:
       - POSTGRES_URL: ${{secrets.POSTGRES_URL}}
     steps:
       - uses: actions/checkout@v3
+      - run: echo "$POSTGRES_USER"
       - name: install dependencies
         run: npm install
       - name: run tests
