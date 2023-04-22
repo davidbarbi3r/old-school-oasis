@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { DataSource } from 'typeorm';
+import { GamesModule } from './games/games.module';
 
 // test comment
 @Module({
@@ -22,6 +23,7 @@ import { DataSource } from 'typeorm';
       migrations: ['dist/db/migrations/*.js'],
     }),
     UsersModule,
+    GamesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
