@@ -11,18 +11,18 @@ export class Game {
   @Column()
   description: string;
 
-  @Column('character', { array: true })
+  @Column('varchar', { array: true })
   platforms: string[];
 
   @Column()
   company: string;
 
   // string array of genres
-  @Column('character', { array: true })
+  @Column('varchar', { array: true })
   genres: string[];
 
   @Column()
-  release_date: string;
+  release_date: Date;
 
   @Column()
   rating: number;
