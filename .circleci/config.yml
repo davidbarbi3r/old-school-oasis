@@ -16,13 +16,13 @@ executors:
         #   username: $DOCKER_HUB_USER
         #   password: $DOCKER_HUB_PASSWORD
 
-jobs:
-  migrations:
-    executor: my-custom-executor
-    steps:
-      - checkout
-      - run: |
-          npm run migration:run
+# jobs:
+  # migrations:
+  #   executor: my-custom-executor
+  #   steps:
+  #     - checkout
+  #     - run: |
+  #         npm run migration:run
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -36,9 +36,9 @@ workflows:
           version: '18.15'
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
-      - migrations:
-          requires: 
-            - node/test
-          filters:
-            branches:
-              only: master # only deploy when on master
+      # - migrations:
+      #     requires: 
+      #       - node/test
+      #     filters:
+      #       branches:
+      #         only: master # only deploy when on master
