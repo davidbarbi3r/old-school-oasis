@@ -2,14 +2,14 @@ name: run-migrations
 
 on: [push, pull_request]
 
+env:
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+  POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
 jobs:
   test: # name of the job
     runs-on: ubuntu-latest
-    env:
-      - POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-      - POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-      - POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-      - POSTGRES_URL: ${{ secrets.POSTGRES_URL }}
     steps:
       - uses: actions/checkout@v3
       - run: echo "let's see who's the boss:$POSTGRES_USER"
