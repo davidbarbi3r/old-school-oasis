@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable no-undef */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/indent */
@@ -16,8 +21,8 @@ module.exports = {
       'prettier/prettier': [
          'error',
          {
-            semi: false,
-            singleQuote: false,
+            semi: true,
+            singleQuote: true,
             trailingComma: 'all',
             arrowParens: 'always',
             printWidth: 100,
@@ -92,8 +97,6 @@ module.exports = {
       'no-unused-vars': 'off',
       'no-useless-constructor': 'off',
       'object-curly-spacing': ['error', 'always'],
-      semi: 'off',
-      '@typescript-eslint/semi': ['error', 'never'],
       'comma-dangle': ['error', 'only-multiline'],
    },
   };

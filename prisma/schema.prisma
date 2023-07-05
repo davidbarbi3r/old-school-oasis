@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userName String
+  email String @unique
+  hash String
+  isActive Boolean @default(true)
+  collections Collection[]
+
+  @@map("users") // this is the name of the table in the database
+}
+
+model Collection {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  description String
+
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+
+  games Game[]
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  description String
+
+  collectionId Int
+  collection Collection @relation(fields: [collectionId], references: [id])
+  
+  @@map("games") // this is the name of the table in the database
+}
+
