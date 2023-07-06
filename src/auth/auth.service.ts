@@ -1,12 +1,19 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prismaModule/prisma.service';
 import { IAuthDto } from './dto';
 import * as argon from 'argon2';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) {}
 
+  // 👇 we create a method to sign up the user (hash password, save user in db, return user without hash)
   async signup(dto: IAuthDto) {
     const hash = await argon.hash(dto.password);
 
@@ -31,6 +38,7 @@ export class AuthService {
     }
   }
 
+  // 👇 we create a method to sign in the user (find user in db, verify password, return token)
   async signin(dto: Omit<IAuthDto, 'username'>) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -44,7 +52,20 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new ForbiddenException('Invalid credentials');
     }
-    delete user.hash;
-    return user;
+
+    return this.signToken(user.id, user.email);
+  }
+
+  // 👇 we create a method to sign the token
+  async signToken(userId: number, email: string): Promise<{ token: string }> {
+    const payload = { sub: userId, email }; // 👈 we call sub the id of the user because it's the standard name for the id of the user in a JWT
+    const token = await this.jwt.signAsync(payload, {
+      secret: this.config.get<string>('JWT_SECRET'),
+      expiresIn: '10m', // 👈 we set the expiration to 10 minutes
+    });
+
+    return {
+      token: token,
+    };
   }
 }
