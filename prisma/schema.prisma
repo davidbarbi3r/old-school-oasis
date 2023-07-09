@@ -10,13 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AuthProvider {
+  local
+  discord
+}
+
 model User {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userName String
   email String @unique
-  hash String
+  hash String? 
+  authProvider AuthProvider @default(local)
   isActive Boolean @default(true)
   collections Collection[]
 
@@ -42,11 +48,26 @@ model Game {
   updatedAt DateTime @updatedAt
   name String
   description String
-  platform String[]
+  
+  platformId Int
+  platform Platform @relation(fields: [platformId], references: [id])
 
   collectionId Int
   collection Collection @relation(fields: [collectionId], references: [id])
   
   @@map("games") // this is the name of the table in the database
 }
+
+model Platform {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  description String
+
+  games Game[]
+}
+
+
+
 
