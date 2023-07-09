@@ -39,7 +39,8 @@ model Collection {
   userId Int
   user User @relation(fields: [userId], references: [id])
 
-  games Game[]
+  games GameItem[]
+  @@map("collections")
 }
 
 model Game {
@@ -52,8 +53,7 @@ model Game {
   platformId Int
   platform Platform @relation(fields: [platformId], references: [id])
 
-  collectionId Int
-  collection Collection @relation(fields: [collectionId], references: [id])
+  GameItem GameItem[]
   
   @@map("games") // this is the name of the table in the database
 }
@@ -68,6 +68,31 @@ model Platform {
   games Game[]
 }
 
+model GameItem {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  gameId Int
+  game Game @relation(fields: [gameId], references: [id])
+
+  collectionId Int
+  collection Collection @relation(fields: [collectionId], references: [id])
+
+  stateId Int
+  state State @relation(fields: [stateId], references: [id])
+
+  @@map("game_items") // this is the name of the table in the database
+}
+
+model State {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name String
+  description String
+
+  games GameItem[]
+}
 
 
 
