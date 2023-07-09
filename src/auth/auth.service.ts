@@ -23,6 +23,7 @@ export class AuthService {
           email: dto.email,
           hash: hash,
           userName: dto.username,
+          authProvider: 'local',
         },
       });
       delete user.hash;
