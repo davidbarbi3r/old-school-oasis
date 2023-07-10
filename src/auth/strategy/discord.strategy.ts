@@ -18,7 +18,6 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: any) {
-    console.log(profile);
     const user = await this.prisma.user.findUnique({
       where: {
         id: profile.id,

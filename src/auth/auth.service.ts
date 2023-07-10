@@ -23,6 +23,7 @@ export class AuthService {
           email: dto.email,
           hash: hash,
           userName: dto.username,
+          role: dto.role,
           authProvider: 'local',
         },
       });
@@ -58,11 +59,11 @@ export class AuthService {
   }
 
   // 👇 we create a method to sign the token
-  async signToken(userId: number, email: string): Promise<{ token: string }> {
+  async signToken(userId: string, email: string): Promise<{ token: string }> {
     const payload = { sub: userId, email }; // 👈 we call sub the id of the user because it's the standard name for the id of the user in a JWT
     const token = await this.jwt.signAsync(payload, {
       secret: this.config.get<string>('JWT_SECRET'),
-      expiresIn: '10m', // 👈 we set the expiration to 10 minutes
+      expiresIn: '30d', // 👈 we set the expiration to 30 days
     });
 
     return {

@@ -13,10 +13,16 @@ datasource db {
 enum AuthProvider {
   local
   discord
+  steam
+}
+
+enum Role {
+  user
+  admin
 }
 
 model User {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userName String
@@ -24,6 +30,7 @@ model User {
   hash String? 
   authProvider AuthProvider @default(local)
   isActive Boolean @default(true)
+  role Role @default(user)
   collections Collection[]
 
   @@map("users") // this is the name of the table in the database
@@ -36,7 +43,7 @@ model Collection {
   name String
   description String
 
-  userId Int
+  userId String
   user User @relation(fields: [userId], references: [id])
 
   games GameItem[]
