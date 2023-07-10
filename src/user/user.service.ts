@@ -22,6 +22,9 @@ export class UserService {
   }
 
   async getAllUsers(skip?: number, take?: number) {
+    // 👇 we offset pagination, which is simpler than cursor pagination but less efficient
+    // offset pagination is not recommended for large datasets as it iterates over all records until it reaches the offset
+    // cursor pagination is more efficient as it uses a cursor (id) to paginate
     const users = await this.prisma.user.findMany({
       skip: skip || 0,
       take: take || 10,
