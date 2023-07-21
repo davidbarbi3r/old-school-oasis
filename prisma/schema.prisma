@@ -51,13 +51,14 @@ model Collection {
 }
 
 model Game {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name String
   description String
+  releaseDate String
   
-  platformId Int
+  platformId String
   platform Platform @relation(fields: [platformId], references: [id])
 
   GameItem GameItem[]
@@ -66,11 +67,12 @@ model Game {
 }
 
 model Platform {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name String
   description String
+  releaseDate DateTime 
 
   games Game[]
 }
@@ -79,7 +81,7 @@ model GameItem {
   id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  gameId Int
+  gameId String
   game Game @relation(fields: [gameId], references: [id])
 
   collectionId Int

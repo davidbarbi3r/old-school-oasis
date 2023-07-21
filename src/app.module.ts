@@ -8,6 +8,8 @@ import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prismaModule/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserModule } from './user/user.module';
+import { GameModule } from './game/game.module';
+import { PlatformModule } from './platform/platform.module';
 
 @Module({
   imports: [
@@ -17,9 +19,11 @@ import { UserModule } from './user/user.module';
     AuthModule,
     PrismaModule,
     UserModule,
+    GameModule,
+    PlatformModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService, PrismaService, JwtService],
+  providers: [AppService, AuthService, PrismaService, JwtService, GameModule],
   exports: [],
 })
 export class AppModule {
