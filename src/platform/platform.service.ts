@@ -11,6 +11,13 @@ export class PlatformService {
       where: {
         id: id,
       },
+      include: {
+        games: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     if (!platform) throw new NotFoundException('No platform found with this id');
@@ -31,7 +38,10 @@ export class PlatformService {
 
   async createPlatform(dto: CreatePlatformDto) {
     const platform = await this.prisma.platform.create({
-      data: dto,
+      data: {
+        ...dto,
+        releaseDate: new Date(dto.releaseDate),
+      },
     });
 
     return platform;

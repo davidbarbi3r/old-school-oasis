@@ -16,6 +16,7 @@ import { JwtGuard } from '../auth/guard';
 import { GameService } from './game.service';
 import { CreateGameDto, UpdateGameDto } from './dto';
 import { AdminRoleGuard } from 'src/user/guard';
+import { Transform } from 'class-transformer';
 
 @Controller('games')
 export class GameController {

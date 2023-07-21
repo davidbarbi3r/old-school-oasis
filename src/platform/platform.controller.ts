@@ -21,7 +21,7 @@ export class PlatformController {
 
   @Get(':id')
   getPlatformById(@Param('id') id: string) {
-    return this.getPlatformById(id);
+    return this.platformService.getPlatformById(id);
   }
 
   @Get()
