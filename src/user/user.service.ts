@@ -6,10 +6,13 @@ import { ChangeRoleDto, UpdateUserDto } from './dto';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async getUserById(id: string) {
+  async getUserById(id: string, collections = false) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        collections: collections,
       },
     });
 
@@ -35,13 +38,13 @@ export class UserService {
 
   async updateProfile(id: string, dto: UpdateUserDto) {
     const user = await this.getUserById(id);
+    delete user.collections;
     try {
       return await this.prisma.user.update({
         where: {
-          id: id,
+          id: user.id,
         },
         data: {
-          ...user,
           ...dto,
         },
       });

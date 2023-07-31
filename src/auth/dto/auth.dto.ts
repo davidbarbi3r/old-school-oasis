@@ -9,7 +9,7 @@ export class IAuthDto {
 
   @IsNotEmpty()
   @MinLength(6)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{4,}$/, {
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/, {
     message: 'This password is not strong enough',
   })
   @IsString()

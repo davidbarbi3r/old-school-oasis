@@ -4,6 +4,7 @@ import { IAuthDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { CollectionService } from 'src/collection/collection.service';
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,7 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    private collection: CollectionService,
   ) {}
 
   // 👇 we create a method to sign up the user (hash password, save user in db, return user without hash)
@@ -29,7 +31,12 @@ export class AuthService {
       });
       delete user.hash;
 
-      return user;
+      const collection = await this.collection.createCollection(user.id, {
+        name: 'Ownasis',
+        description: 'My base collection for retrogaming',
+      });
+
+      return { user, collection };
     } catch (error) {
       // grab this error to handle unique constraint on dto
       if (error.code === 'P2002') {
