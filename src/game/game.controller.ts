@@ -1,12 +1,10 @@
-import { Game, GameItem } from '@prisma/client';
 import {
   Body,
   Controller,
-  Delete,
   Get,
+  Delete,
   Param,
   ParseIntPipe,
-  Patch,
   Post,
   Put,
   Query,
@@ -16,12 +14,18 @@ import { JwtGuard } from '../auth/guard';
 import { GameService } from './game.service';
 import { CreateGameDto, UpdateGameDto } from './dto';
 import { AdminRoleGuard } from 'src/user/guard';
-import { Transform } from 'class-transformer';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('games')
 @Controller('games')
 export class GameController {
   constructor(private gameService: GameService) {}
 
+  @ApiOperation({ summary: 'Get game by id' })
+  @ApiResponse({ status: 200, description: 'Return game by id' })
+  @ApiResponse({ status: 404, description: 'Game not found' })
+  @ApiResponse({ status: 403, description: 'Unauthorized' })
   @UseGuards(JwtGuard)
   @Get(':id')
   getGameById(@Param('id') id: string) {
@@ -47,5 +51,11 @@ export class GameController {
   @Put('update/:id')
   updateGame(@Param('id') id: string, @Body() dto: UpdateGameDto) {
     return this.gameService.updateGame(id, dto);
+  }
+
+  @UseGuards(JwtGuard, AdminRoleGuard)
+  @Delete('delete/:id')
+  deleteGame(@Param('id') id: string) {
+    return this.gameService.deleteGame(id);
   }
 }

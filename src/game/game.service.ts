@@ -20,6 +20,23 @@ export class GameService {
     return game;
   }
 
+  async getGameByName(name: string) {
+    const game = await this.prisma.game.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+    });
+
+    if (game.length === 0) {
+      throw new NotFoundException(`We haven't found game with this name`);
+    }
+
+    return game;
+  }
+
   async getAllGames(skip?: number, take?: number) {
     const games = await this.prisma.game.findMany({
       skip: skip || 0,

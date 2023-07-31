@@ -14,6 +14,7 @@ async function bootstrap() {
     .setDescription('The Old School Oasis API description')
     .setVersion('0.1')
     .addTag('Old School Oasis')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
