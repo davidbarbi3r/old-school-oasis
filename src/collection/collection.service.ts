@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
 import { CreateCollectionDto } from './dto/collection.dto';
 
@@ -15,5 +15,14 @@ export class CollectionService {
     });
 
     return collection;
+  }
+
+  async getAllCollections() {
+    const collections = await this.prisma.collection.findMany();
+    if (collections.length === 0) {
+      throw new NotFoundException('No collections found');
+    }
+
+    return collections;
   }
 }
