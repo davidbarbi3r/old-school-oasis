@@ -37,7 +37,7 @@ model User {
 }
 
 model Collection {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name String
@@ -78,23 +78,23 @@ model Platform {
 }
 
 model GameItem {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   gameId String
   game Game @relation(fields: [gameId], references: [id])
 
-  collectionId Int
+  collectionId String
   collection Collection @relation(fields: [collectionId], references: [id])
 
-  stateId Int
+  stateId String
   state State @relation(fields: [stateId], references: [id])
 
   @@map("game_items") // this is the name of the table in the database
 }
 
 model State {
-  id Int @id @default(autoincrement())
+  id String @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name String

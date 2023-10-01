@@ -25,4 +25,30 @@ export class CollectionService {
 
     return collections;
   }
+
+  async getMyCollections(userId: string) {
+    const collections = await this.prisma.collection.findMany({
+      where: {
+        userId,
+      },
+    });
+    if (collections.length === 0) {
+      throw new NotFoundException('No collections found');
+    }
+
+    return collections;
+  }
+
+  async getCollectionById(id: string) {
+    const collection = await this.prisma.collection.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!collection) {
+      throw new NotFoundException('No collection found');
+    }
+
+    return collection;
+  }
 }

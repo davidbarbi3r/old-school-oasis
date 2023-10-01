@@ -32,6 +32,15 @@ export class GameController {
     return this.gameService.getGameById(id);
   }
 
+  @ApiOperation({ summary: 'Search game by name' })
+  @ApiResponse({ status: 200, description: 'Return games by name' })
+  @ApiResponse({ status: 404, description: 'No games found' })
+  @UseGuards(JwtGuard)
+  @Get('search/:name')
+  searchGamesByName(@Param('name') name: string) {
+    return this.gameService.getGamesByName(name);
+  }
+
   @UseGuards(JwtGuard)
   @Get()
   getAllGames(
