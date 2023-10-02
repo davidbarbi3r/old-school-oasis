@@ -67,11 +67,6 @@ module.exports = {
             leadingUnderscore: 'allow',
          },
          {
-            selector: 'property',
-            format: ['camelCase', 'snake_case'],
-            leadingUnderscore: 'allow',
-         },
-         {
             selector: 'function',
             format: ['camelCase'],
             leadingUnderscore: 'allow',

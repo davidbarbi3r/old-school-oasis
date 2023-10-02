@@ -12,6 +12,7 @@ import { GameModule } from './game/game.module';
 import { PlatformModule } from './platform/platform.module';
 import { CollectionModule } from './collection/collection.module';
 import { GameService } from './game/game.service';
+import { IgdbModule } from './igdb/igdb.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GameService } from './game/game.service';
     GameModule,
     PlatformModule,
     CollectionModule,
+    IgdbModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthService, PrismaService, JwtService, GameService],

@@ -7,5 +7,6 @@ import { UserModule } from 'src/user/user.module';
   controllers: [GameController],
   providers: [GameService],
   imports: [UserModule], // to get the adminguard
+  exports: [GameService],
 })
 export class GameModule {}

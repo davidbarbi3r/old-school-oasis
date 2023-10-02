@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
-import { CreateGameDto, UpdateGameDto } from './dto/game.dto';
+import { CreateGameDto, UpdateGameDto } from './dto';
 
 @Injectable()
 export class GameService {
@@ -31,7 +31,7 @@ export class GameService {
     });
 
     if (games.length === 0) {
-      throw new NotFoundException(`We haven't found game with this name`);
+      throw new NotFoundException(`No games found`);
     }
 
     return games;

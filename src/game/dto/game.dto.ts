@@ -7,6 +7,24 @@ export class CreateGameDto {
   @IsString()
   description: string;
 
+  @IsString()
+  storyLine: string;
+
+  @IsString()
+  rating: number;
+
+  @IsString()
+  coverUrl: string;
+
+  @IsString()
+  websiteUrl: string;
+
+  @IsString()
+  screenshotUrls: string;
+
+  @IsString()
+  genres: string;
+
   @IsISO8601()
   releaseDate: string;
 

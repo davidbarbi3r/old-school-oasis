@@ -22,86 +22,90 @@ enum Role {
 }
 
 model User {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userName String
-  email String @unique
-  hash String? 
+  id           String       @id @default(uuid())
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  userName     String
+  email        String       @unique
+  hash         String?
   authProvider AuthProvider @default(local)
-  isActive Boolean @default(true)
-  role Role @default(user)
-  collections Collection[]
+  isActive     Boolean      @default(true)
+  role         Role         @default(user)
+  collections  Collection[]
 
   @@map("users") // this is the name of the table in the database
 }
 
 model Collection {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
   description String
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   games GameItem[]
+
   @@map("collections")
 }
 
 model Game {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
-  description String
-  releaseDate String
-  
+  id             String   @id @default(uuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  name           String
+  description    String
+  storyLine      String
+  rating         Float
+  coverUrl       String
+  websiteUrl     String
+  screenshotUrls String
+  genres         String
+  releaseDate    String
+
   platformId String
-  platform Platform @relation(fields: [platformId], references: [id])
+  platform   Platform @relation(fields: [platformId], references: [id])
 
   GameItem GameItem[]
-  
+
   @@map("games") // this is the name of the table in the database
 }
 
 model Platform {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
   description String
-  releaseDate DateTime 
+  releaseDate DateTime
 
   games Game[]
 }
 
 model GameItem {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  gameId String
-  game Game @relation(fields: [gameId], references: [id])
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id])
 
   collectionId String
-  collection Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id])
 
   stateId String
-  state State @relation(fields: [stateId], references: [id])
+  state   State  @relation(fields: [stateId], references: [id])
 
   @@map("game_items") // this is the name of the table in the database
 }
 
 model State {
-  id String @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name String
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
   description String
 
   games GameItem[]
 }
-
-
-
