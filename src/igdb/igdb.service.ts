@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IIgdbAuth } from './types/igdb';
 import { ConfigService } from '@nestjs/config';
-import { Game } from '@prisma/client';
 
 @Injectable()
 export class IgdbService {
@@ -43,18 +42,18 @@ export class IgdbService {
     });
 
     const data = await response.json();
-    const games: Game[] = data.map((game) => {
+    const games = data.map((game) => {
       return {
         name: game.name,
-        description: game.summary ? game.summary : '',
-        storyLine: game.storyline ? game.storyline : '',
+        description: game.summary ? game.summary : null,
+        storyLine: game.storyline ? game.storyline : null,
         releaseDate: new Date(game.first_release_date).toISOString(),
-        platformId: game.platforms[0].id.toString(),
-        coverUrl: game.cover.url ? game.cover.url : '',
-        websiteUrl: game.websites[0].url ? game.websites[0].url : '',
-        screenshotUrls: game.screenshots[0].url ? game.screenshots[0].url : '',
-        genres: game.genres[0].name ? game.genres[0].name : '',
-        rating: game.rating ? game.rating : 0,
+        platformsId: [...game.platforms],
+        coverUrl: game.cover.url ? game.cover.url : null,
+        websiteUrl: game.websites[0].url ? game.websites[0].url : null,
+        screenshotUrls: game.screenshots[0].url ? game.screenshots[0].url : null,
+        genres: game.genres[0].name ? game.genres[0].name : null,
+        rating: game.rating ? game.rating : null,
       };
     });
 
@@ -73,17 +72,38 @@ export class IgdbService {
         'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
         Authorization: `Bearer ${this.igdbAuth.access_token}`,
       },
-      body: `search "${name}"; fields name, platform_logo.url, platform_family, summary, url, generation, websites.url, versions.name, versions.platform_version_release_dates.human, versions.platform_version_release_dates.region ; limit 10;`,
+      body: `search "${name}"; fields name, platform_logo.url, platform_family, summary, url, generation, websites.url, versions.name, versions.storage, versions.summary, versions.url, versions.cpu, versions.graphics, versions.platform_version_release_dates.human, versions.platform_version_release_dates.region ; limit 10;`,
     });
 
     const data = await response.json();
 
-    // const platforms = data.map((platform) => {
-    //   return {
-    //     name: platform.name,
-    //     logoUrl: platform.logo.url ? platform.logo.url : '',
-    //   };
-    // });
+    if (data.length === 0) {
+      return [];
+    }
+
+    return data;
+  }
+
+  async searchPlatformVersions(name: string) {
+    if (!this.igdbAuth.access_token) {
+      await this.getIgdbAuth();
+    }
+
+    const response = await fetch('https://api.igdb.com/v4/platform_versions', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
+        Authorization: `Bearer ${this.igdbAuth.access_token}`,
+      },
+      body: `search "${name}"; fields *; limit 10;`,
+    });
+
+    const data = await response.json();
+
+    if (data.length === 0) {
+      return [];
+    }
 
     return data;
   }

@@ -65,8 +65,8 @@ model Game {
   genres         String
   releaseDate    String
 
-  platformId String
-  platform   Platform @relation(fields: [platformId], references: [id])
+  platformsId Int?
+  platform    Platform? @relation(fields: [platformsId], references: [id])
 
   GameItem GameItem[]
 
@@ -74,14 +74,31 @@ model Game {
 }
 
 model Platform {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String
-  description String
-  releaseDate DateTime
+  id         Int               @id
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  name       String
+  logoUrl    String?
+  versions   PlatformVersion[]
+  generation Int
 
   games Game[]
+}
+
+model PlatformVersion {
+  id               Int       @id
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  name             String
+  summary          String?
+  url              String?
+  storage          String?
+  cpu              String?
+  graphics         String?
+  firstReleaseDate String?
+  region           String?
+  Platform         Platform? @relation(fields: [platformId], references: [id])
+  platformId       Int?
 }
 
 model GameItem {

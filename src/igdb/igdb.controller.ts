@@ -18,4 +18,9 @@ export class IgdbController {
   searchPlatformsByName(@Param('name') name: string) {
     return this.igdbService.searchIgdbPlatforms(name);
   }
+
+  @Get('searchPlatformVersion/:name')
+  searchPlatformVersionsByName(@Param('name') name: string) {
+    return this.igdbService.searchPlatformVersions(name);
+  }
 }

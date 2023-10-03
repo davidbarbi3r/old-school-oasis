@@ -1,14 +1,49 @@
-import { IsISO8601, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class CreatePlatformDto {
+  @IsInt()
+  id: number;
+
   @IsString()
   name: string;
 
   @IsString()
-  description: string;
+  logoUrl: string;
 
-  @IsISO8601()
-  releaseDate: string;
+  @IsInt()
+  generation: number;
+}
+
+export class CreatePlatformVersionDto {
+  @IsInt()
+  id: number;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  summary: string;
+
+  @IsString()
+  url: string;
+
+  @IsString()
+  storage: string;
+
+  @IsString()
+  cpu: string;
+
+  @IsString()
+  graphics: string;
+
+  @IsString()
+  firstReleaseDate: string;
+
+  @IsString()
+  region: string;
+
+  @IsInt()
+  platformId: number;
 }
 
 export class UpdatePlatformDto {

@@ -1,4 +1,4 @@
-import { IsISO8601, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsInt, IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class CreateGameDto {
   @IsString()
@@ -28,8 +28,8 @@ export class CreateGameDto {
   @IsISO8601()
   releaseDate: string;
 
-  @IsUUID()
-  platformId: string;
+  @IsInt()
+  platformId: number;
 }
 
 export class UpdateGameDto {
@@ -46,6 +46,6 @@ export class UpdateGameDto {
   releaseDate: string;
 
   @IsOptional()
-  @IsUUID()
-  platformId: string;
+  @IsInt()
+  platformId: number;
 }

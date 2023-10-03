@@ -20,8 +20,13 @@ export class PlatformController {
   constructor(private platformService: PlatformService) {}
 
   @Get(':id')
-  getPlatformById(@Param('id') id: string) {
+  getPlatformById(@Param('id', ParseIntPipe) id: number) {
     return this.platformService.getPlatformById(id);
+  }
+
+  @Get('search/:name')
+  searchPlatformsByName(@Param('name') name: string) {
+    return this.platformService.getPlatformByName(name);
   }
 
   @Get()
@@ -40,13 +45,13 @@ export class PlatformController {
 
   @UseGuards(JwtGuard, AdminRoleGuard)
   @Put('update/:id')
-  updatePlatform(@Param('id') id: string, @Body() dto: UpdatePlatformDto) {
+  updatePlatform(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePlatformDto) {
     return this.platformService.updatePlatform(id, dto);
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)
   @Delete(':id')
-  deletePlatform(@Param('id') id: string) {
+  deletePlatform(@Param('id', ParseIntPipe) id: number) {
     return this.platformService.deletePlatform(id);
   }
 }
