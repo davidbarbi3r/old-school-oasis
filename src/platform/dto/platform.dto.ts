@@ -1,4 +1,4 @@
-import { IsInt, IsISO8601, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmpty, IsInt, IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class CreatePlatformDto {
   @IsInt()
@@ -24,6 +24,10 @@ export class CreatePlatformVersionDto {
   @IsString()
   summary: string;
 
+  @IsOptional()
+  @IsString()
+  interestingFacts: string;
+
   @IsString()
   url: string;
 
@@ -38,6 +42,17 @@ export class CreatePlatformVersionDto {
 
   @IsString()
   firstReleaseDate: string;
+
+  @IsOptional()
+  @IsString()
+  discontinuedDate: string;
+
+  @IsOptional()
+  @IsInt()
+  salesNumber: number;
+
+  @IsString({ each: true })
+  popularGames: string[];
 
   @IsString()
   region: string;

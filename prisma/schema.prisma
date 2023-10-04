@@ -52,7 +52,7 @@ model Collection {
 }
 
 model Game {
-  id             String   @id @default(uuid())
+  id             Int      @id
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   name           String
@@ -91,11 +91,15 @@ model PlatformVersion {
   updatedAt        DateTime  @updatedAt
   name             String
   summary          String?
+  interestingFacts String?
   url              String?
   storage          String?
   cpu              String?
   graphics         String?
   firstReleaseDate String?
+  discontinuedDate String?
+  salesNumber      Int?
+  popularGames     String[]
   region           String?
   Platform         Platform? @relation(fields: [platformId], references: [id])
   platformId       Int?
@@ -105,7 +109,7 @@ model GameItem {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  gameId    String
+  gameId    Int
   game      Game     @relation(fields: [gameId], references: [id])
 
   collectionId String
