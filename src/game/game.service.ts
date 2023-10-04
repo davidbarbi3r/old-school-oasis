@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
 import { CreateGameDto, UpdateGameDto } from './dto';
+import { IgdbService } from '../igdb/igdb.service';
 
 @Injectable()
 export class GameService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private igdb: IgdbService) {}
 
-  async getGameById(id: string) {
+  async getGameById(id: number) {
     const game = await this.prisma.game.findUnique({
       where: {
         id: id,
@@ -30,11 +31,21 @@ export class GameService {
       },
     });
 
-    if (games.length === 0) {
+    /*if (games.length === 0) {
+      throw new NotFoundException(`No games found`);
+    }*/
+
+    const igdbGames = await this.igdb.searchIgdbGames(name);
+
+    if (igdbGames.length === 0) {
       throw new NotFoundException(`No games found`);
     }
 
-    return games;
+    for await (const game of igdbGames) {
+      await this.createGame(game);
+    }
+
+    return [...games, ...igdbGames];
   }
 
   async getAllGames(skip?: number, take?: number) {
@@ -58,7 +69,7 @@ export class GameService {
     return game;
   }
 
-  async updateGame(id: string, dto: UpdateGameDto) {
+  async updateGame(id: number, dto: UpdateGameDto) {
     const updatedGame = await this.prisma.game.update({
       where: {
         id: id,
@@ -71,7 +82,7 @@ export class GameService {
     return updatedGame;
   }
 
-  async deleteGame(id: string) {
+  async deleteGame(id: number) {
     const deletedGame = await this.prisma.game.delete({
       where: {
         id: id,

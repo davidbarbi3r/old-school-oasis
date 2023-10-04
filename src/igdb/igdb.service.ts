@@ -44,16 +44,21 @@ export class IgdbService {
     const data = await response.json();
     const games = data.map((game) => {
       return {
+        id: game.id,
         name: game.name,
         description: game.summary ? game.summary : null,
         storyLine: game.storyline ? game.storyline : null,
-        releaseDate: new Date(game.first_release_date).toISOString(),
-        platformsId: [...game.platforms],
-        coverUrl: game.cover.url ? game.cover.url : null,
-        websiteUrl: game.websites[0].url ? game.websites[0].url : null,
-        screenshotUrls: game.screenshots[0].url ? game.screenshots[0].url : null,
-        genres: game.genres[0].name ? game.genres[0].name : null,
         rating: game.rating ? game.rating : null,
+        coverUrl: game.cover.url ? game.cover.url.slice(2) : null,
+        websiteUrl: game.websites[0].url ? game.websites[0].url : null,
+        screenshotUrls: game.screenshots[0].url
+          ? game.screenshots.map((screen) => screen.url.slice(2))
+          : [],
+        genres: game.genres[0].name ? game.genres.map((genre) => genre.name) : [],
+        releaseDate: game.first_release_date
+          ? new Date(game.first_release_date).toISOString()
+          : null,
+        platforms: game.platforms.map((platform) => platform.id),
       };
     });
 

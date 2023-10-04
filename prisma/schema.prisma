@@ -56,17 +56,16 @@ model Game {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   name           String
-  description    String
-  storyLine      String
-  rating         Float
-  coverUrl       String
-  websiteUrl     String
-  screenshotUrls String
-  genres         String
-  releaseDate    String
+  description    String?
+  storyLine      String?
+  rating         Float?
+  coverUrl       String?
+  websiteUrl     String?
+  screenshotUrls String[]
+  genres         String[]
+  releaseDate    String?
 
-  platformsId Int?
-  platform    Platform? @relation(fields: [platformsId], references: [id])
+  platforms GamesOnPlatforms[]
 
   GameItem GameItem[]
 
@@ -80,9 +79,19 @@ model Platform {
   name       String
   logoUrl    String?
   versions   PlatformVersion[]
-  generation Int
+  generation Int?
 
-  games Game[]
+  games GamesOnPlatforms[]
+}
+
+model GamesOnPlatforms {
+  game       Game     @relation(fields: [gameId], references: [id])
+  gameId     Int
+  platform   Platform @relation(fields: [platformId], references: [id])
+  platformId Int // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+
+  @@id([gameId, platformId])
 }
 
 model PlatformVersion {

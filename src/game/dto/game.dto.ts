@@ -1,6 +1,9 @@
 import { IsInt, IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class CreateGameDto {
+  @IsInt()
+  id: number;
+
   @IsString()
   name: string;
 
@@ -19,11 +22,11 @@ export class CreateGameDto {
   @IsString()
   websiteUrl: string;
 
-  @IsString()
-  screenshotUrls: string;
+  @IsString({ each: true})
+  screenshotUrls: string[];
 
-  @IsString()
-  genres: string;
+  @IsString({ each: true})
+  genres: string[];
 
   @IsISO8601()
   releaseDate: string;
