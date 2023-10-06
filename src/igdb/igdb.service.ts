@@ -112,4 +112,28 @@ export class IgdbService {
 
     return data;
   }
+
+  async getIgdbPlatformById(id: number) {
+    if (!this.igdbAuth.access_token) {
+      await this.getIgdbAuth();
+    }
+
+    const response = await fetch('https://api.igdb.com/v4/platforms', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
+        Authorization: `Bearer ${this.igdbAuth.access_token}`,
+      },
+      body: `where id = ${id}; fields name, platform_logo.url, platform_family, summary, url, generation, websites.url, versions.name, versions.storage, versions.summary, versions.url, versions.cpu, versions.graphics, versions.platform_version_release_dates.human, versions.platform_version_release_dates.region; limit 1;`,
+    });
+
+    const data = await response.json();
+
+    if (data.length === 0) {
+      return [];
+    }
+
+    return data;
+  }
 }

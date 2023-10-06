@@ -46,7 +46,8 @@ model Collection {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  games GameItem[]
+  games        GameItem[]
+  PlatformItem PlatformItem[]
 
   @@map("collections")
 }
@@ -81,7 +82,8 @@ model Platform {
   versions   PlatformVersion[]
   generation Int?
 
-  games GamesOnPlatforms[]
+  games        GamesOnPlatforms[]
+  PlatformItem PlatformItem[]
 }
 
 model GamesOnPlatforms {
@@ -125,12 +127,27 @@ model GameItem {
   collection   Collection @relation(fields: [collectionId], references: [id])
 
   stateId String
-  state   State  @relation(fields: [stateId], references: [id])
+  state   GameState @relation(fields: [stateId], references: [id])
 
   @@map("game_items") // this is the name of the table in the database
 }
 
-model State {
+model PlatformItem {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  platform   Platform @relation(fields: [platformId], references: [id])
+  platformId Int
+
+  collectionId String
+  collection   Collection @relation(fields: [collectionId], references: [id])
+
+  stateId String
+  state   PlatformState @relation(fields: [stateId], references: [id])
+}
+
+model GameState {
   id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -138,4 +155,14 @@ model State {
   description String
 
   games GameItem[]
+}
+
+model PlatformState {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String
+
+  platforms PlatformItem[]
 }

@@ -32,7 +32,7 @@ export class CreateGameDto {
   releaseDate: string;
 
   @IsInt()
-  platformId: number;
+  platforms: number[];
 }
 
 export class UpdateGameDto {

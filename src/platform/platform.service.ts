@@ -9,13 +9,15 @@ export class PlatformService {
   constructor(private prisma: PrismaService, private igdb: IgdbService) {}
 
   async getPlatformById(id: number) {
-    const platform = await this.prisma.platform.findUnique({
+    let platform = await this.prisma.platform.findUnique({
       where: {
         id: id,
       },
     });
 
-    if (!platform) throw new NotFoundException('No platform found with this id');
+    if (!platform) {
+      platform = await this.igdb.getIgdbPlatformById(id);
+    }
 
     return platform;
   }

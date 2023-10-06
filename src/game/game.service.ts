@@ -42,7 +42,14 @@ export class GameService {
     }
 
     for await (const game of igdbGames) {
-      await this.createGame(game);
+      try {
+        await this.createGame(game);
+      } catch (error) {
+        return {
+          game: game,
+          error: error,
+        };
+      }
     }
 
     return [...games, ...igdbGames];
@@ -63,7 +70,18 @@ export class GameService {
 
   async createGame(dto: CreateGameDto) {
     const game = await this.prisma.game.create({
-      data: dto,
+      data: {
+        ...dto,
+        platforms: {
+          create: dto.platforms.map((platform) => ({
+            platform: {
+              connect: {
+                id: platform,
+              },
+            },
+          })),
+        },
+      },
     });
 
     return game;
