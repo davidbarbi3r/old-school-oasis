@@ -49,19 +49,20 @@ export class AuthService {
 
   // 👇 we create a method to sign in the user (find user in db, verify password, return token)
   async signin(dto: Omit<IAuthDto, 'username'>) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: dto.email,
-      },
-    });
-    if (!user) {
+    let user;
+    try {
+      user = await this.prisma.user.findUnique({
+        where: {
+          email: dto.email,
+        },
+      });
+      const isPasswordValid = await argon.verify(user.hash, dto.password);
+      if (!isPasswordValid) {
+        throw new ForbiddenException('Invalid credentials');
+      }
+    } catch (error) {
       throw new ForbiddenException('Invalid credentials');
     }
-    const isPasswordValid = await argon.verify(user.hash, dto.password);
-    if (!isPasswordValid) {
-      throw new ForbiddenException('Invalid credentials');
-    }
-
     return this.signToken(user.id, user.email);
   }
 
