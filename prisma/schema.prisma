@@ -21,6 +21,27 @@ enum Role {
   admin
 }
 
+enum ItemCondition {
+  new
+  good
+  fair
+  poor
+  broken
+}
+
+enum CompletedItem {
+  itemOnly
+  itemAndManual
+  itemManualAndBox
+  sealed
+}
+
+enum WorkingState {
+  working
+  notWorking
+  unknown
+}
+
 model User {
   id           String       @id @default(uuid())
   createdAt    DateTime     @default(now())
@@ -148,9 +169,13 @@ model PlatformItem {
 }
 
 model GameState {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  completed   CompletedItem
+  working     WorkingState
+  condition   ItemCondition
+  pictures    String[]
   name        String
   description String
 
@@ -158,9 +183,13 @@ model GameState {
 }
 
 model PlatformState {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String        @id @default(uuid())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  completed   CompletedItem
+  working     WorkingState
+  condition   ItemCondition
+  pictures    String[]
   name        String
   description String
 

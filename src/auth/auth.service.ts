@@ -36,7 +36,11 @@ export class AuthService {
         description: 'My base collection for retrogaming',
       });
 
-      return { user, collection };
+      return {
+        ...user,
+        token: this.signToken(user.id, user.email),
+        collection,
+      };
     } catch (error) {
       // grab this error to handle unique constraint on dto
       if (error.code === 'P2002') {
@@ -63,7 +67,10 @@ export class AuthService {
     } catch (error) {
       throw new ForbiddenException('Invalid credentials');
     }
-    return this.signToken(user.id, user.email);
+    return {
+      ...user,
+      ...(await this.signToken(user.id, user.email)),
+    };
   }
 
   // 👇 we create a method to sign the token
