@@ -24,6 +24,43 @@ export class UserService {
     return user;
   }
 
+  async getUserByUsername(username: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        userName: username,
+      },
+      include: {
+        collections: {
+          include: {
+            games: {
+              include: {
+                platform: true,
+                game: true,
+              },
+            },
+            PlatformItem: {
+              include: {
+                platform: true,
+              },
+            },
+            _count: {
+              select: {
+                games: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with username ${username} not found`);
+    }
+
+    delete user.hash;
+    return user;
+  }
+
   async getAllUsers(skip?: number, take?: number) {
     // 👇 we offset pagination, which is simpler than cursor pagination but less efficient
     // offset pagination is not recommended for large datasets as it iterates over all records until it reaches the offset

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
-import { CreateCollectionDto } from './dto/collection.dto';
+import { AddGameToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
+import { CompletedItem, GameItem, GameState, ItemCondition, WorkingState } from '@prisma/client';
 
 @Injectable()
 export class CollectionService {
@@ -50,5 +51,54 @@ export class CollectionService {
     }
 
     return collection;
+  }
+
+  async addGameToCollection(userId: string, dto: AddGameToCollectionDto) {
+    const collections = await this.prisma.collection.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    const gameStateDefault = {
+      working: WorkingState.working,
+      completed: CompletedItem.itemOnly,
+      condition: ItemCondition.good,
+      name: '',
+      description: '',
+    };
+
+    const game = await this.prisma.gameItem.create({
+      data: {
+        state: {
+          create: gameStateDefault,
+        },
+        game: {
+          connect: {
+            id: dto.gameId,
+          },
+        },
+        collection: {
+          connect: {
+            id: collections[0].id,
+          },
+        },
+        platform: {
+          connect: {
+            id: dto.platformId,
+          },
+        },
+        gamesOnPlatforms: {
+          connect: {
+            gameId_platformId: {
+              gameId: dto.gameId,
+              platformId: dto.platformId,
+            },
+          },
+        },
+      },
+    });
+
+    return game;
   }
 }

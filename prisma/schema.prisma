@@ -22,7 +22,7 @@ enum Role {
 }
 
 enum ItemCondition {
-  new
+  sealed
   good
   fair
   poor
@@ -33,7 +33,6 @@ enum CompletedItem {
   itemOnly
   itemAndManual
   itemManualAndBox
-  sealed
 }
 
 enum WorkingState {
@@ -42,11 +41,19 @@ enum WorkingState {
   unknown
 }
 
+enum BoughtFrom {
+  online
+  localStore
+  garageSale
+  particular
+  other
+}
+
 model User {
   id           String       @id @default(uuid())
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  userName     String
+  userName     String       @unique
   email        String       @unique
   hash         String?
   authProvider AuthProvider @default(local)
@@ -100,27 +107,30 @@ model Platform {
   updatedAt  DateTime          @updatedAt
   name       String
   logoUrl    String?
+  coverUrl   String?
   versions   PlatformVersion[]
   generation Int?
 
   games        GamesOnPlatforms[]
   PlatformItem PlatformItem[]
+  GameItem     GameItem[]
 }
 
 model GamesOnPlatforms {
-  game       Game     @relation(fields: [gameId], references: [id])
+  game       Game       @relation(fields: [gameId], references: [id])
   gameId     Int
-  platform   Platform @relation(fields: [platformId], references: [id])
+  platform   Platform   @relation(fields: [platformId], references: [id])
   platformId Int // relation scalar field (used in the `@relation` attribute above)
-  assignedAt DateTime @default(now())
+  assignedAt DateTime   @default(now())
+  GameItem   GameItem[]
 
   @@id([gameId, platformId])
 }
 
 model PlatformVersion {
-  id               Int       @id
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id               Int            @id
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
   name             String
   summary          String?
   interestingFacts String?
@@ -133,8 +143,9 @@ model PlatformVersion {
   salesNumber      Int?
   popularGames     String[]
   region           String?
-  Platform         Platform? @relation(fields: [platformId], references: [id])
+  Platform         Platform?      @relation(fields: [platformId], references: [id])
   platformId       Int?
+  PlatformItem     PlatformItem[]
 }
 
 model GameItem {
@@ -143,6 +154,11 @@ model GameItem {
   updatedAt DateTime @updatedAt
   gameId    Int
   game      Game     @relation(fields: [gameId], references: [id])
+
+  platformId Int
+  platform   Platform @relation(fields: [platformId], references: [id])
+
+  gamesOnPlatforms GamesOnPlatforms @relation(fields: [gameId, platformId], references: [gameId, platformId])
 
   collectionId String
   collection   Collection @relation(fields: [collectionId], references: [id])
@@ -161,6 +177,9 @@ model PlatformItem {
   platform   Platform @relation(fields: [platformId], references: [id])
   platformId Int
 
+  versionId Int
+  version   PlatformVersion @relation(fields: [versionId], references: [id])
+
   collectionId String
   collection   Collection @relation(fields: [collectionId], references: [id])
 
@@ -175,9 +194,11 @@ model GameState {
   completed   CompletedItem
   working     WorkingState
   condition   ItemCondition
+  boughtAt    DateTime?
+  boughtFrom  BoughtFrom?
   pictures    String[]
-  name        String
-  description String
+  name        String?
+  description String?
 
   games GameItem[]
 }

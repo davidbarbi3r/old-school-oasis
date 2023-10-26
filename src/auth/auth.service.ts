@@ -5,6 +5,7 @@ import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CollectionService } from 'src/collection/collection.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +33,7 @@ export class AuthService {
       delete user.hash;
 
       const collection = await this.collection.createCollection(user.id, {
-        name: 'Ownasis',
+        name: 'Ownasis' + user.userName,
         description: 'My base collection for retrogaming',
       });
 
@@ -53,7 +54,7 @@ export class AuthService {
 
   // 👇 we create a method to sign in the user (find user in db, verify password, return token)
   async signin(dto: Omit<IAuthDto, 'username'>) {
-    let user;
+    let user: User;
     try {
       user = await this.prisma.user.findUnique({
         where: {
@@ -67,6 +68,9 @@ export class AuthService {
     } catch (error) {
       throw new ForbiddenException('Invalid credentials');
     }
+
+    delete user.hash;
+
     return {
       ...user,
       ...(await this.signToken(user.id, user.email)),

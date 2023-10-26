@@ -25,8 +25,8 @@ export class PlatformController {
   }
 
   @Get('search/:name')
-  searchPlatformsByName(@Param('name') name: string) {
-    return this.platformService.getPlatformByName(name);
+  searchPlatformsByName(@Param('name') name: string, @Query('take', ParseIntPipe) take: number) {
+    return this.platformService.getPlatformByName(name, take);
   }
 
   @Get()
@@ -35,6 +35,11 @@ export class PlatformController {
     @Query('take', ParseIntPipe) take: number,
   ) {
     return this.platformService.getAllPlatform(skip, take);
+  }
+
+  @Get('starter/:id')
+  getPlatformsStarter(@Param('id', ParseIntPipe) id: number) {
+    return this.platformService.getPlatformsStarter(id);
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)

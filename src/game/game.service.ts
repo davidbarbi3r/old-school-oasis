@@ -22,43 +22,56 @@ export class GameService {
   }
 
   async getGamesByName(name: string) {
-    const games = await this.prisma.game.findMany({
-      where: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
-      },
-    });
+    // const games = await this.prisma.game.findMany({
+    //   where: {
+    //     name: {
+    //       contains: name,
+    //       mode: 'insensitive',
+    //     },
+    //   },
+    // });
 
-    /*if (games.length === 0) {
-      throw new NotFoundException(`No games found`);
-    }*/
+    // if (games.length > 0) {
+    //   return games;
+    // }
 
     const igdbGames = await this.igdb.searchIgdbGames(name);
-
+    console.log('igdbGames', igdbGames);
     if (igdbGames.length === 0) {
       throw new NotFoundException(`No games found`);
     }
 
     for await (const game of igdbGames) {
-      try {
+      const existingGame = await this.prisma.game.findUnique({
+        where: {
+          id: game.id,
+        },
+      });
+
+      if (!existingGame && game.platforms) {
         await this.createGame(game);
-      } catch (error) {
-        return {
-          game: game,
-          error: error,
-        };
       }
     }
 
-    return [...games, ...igdbGames];
+    return igdbGames;
   }
 
-  async getAllGames(skip?: number, take?: number) {
+  async getAllGames(platform: string, skip?: number, take?: number) {
     const games = await this.prisma.game.findMany({
+      where: {
+        platforms: {
+          some: {
+            platform: {
+              name: platform,
+            },
+          },
+        },
+      },
       skip: skip || 0,
       take: take,
+      orderBy: {
+        rating: 'desc',
+      },
     });
 
     if (games.length === 0) {
@@ -68,10 +81,32 @@ export class GameService {
     return games;
   }
 
+  async getGamesByPlatform(id: number, skip?: number, take?: number) {
+    const games = await this.igdb.getIgdbGamesByPlatform(id, skip, take);
+
+    if (games.length === 0) {
+      throw new NotFoundException(`No games found`);
+    }
+
+    for await (const game of games) {
+      const existingGame = await this.prisma.game.findUnique({
+        where: {
+          id: game.id,
+        },
+      });
+      if (!existingGame) {
+        await this.createGame(game);
+      }
+    }
+
+    return games;
+  }
+
   async createGame(dto: CreateGameDto) {
     const game = await this.prisma.game.create({
       data: {
         ...dto,
+        // if no platforms are provided do not connect any
         platforms: {
           create: dto.platforms.map((platform) => ({
             platform: {

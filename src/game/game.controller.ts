@@ -41,13 +41,22 @@ export class GameController {
     return this.gameService.getGamesByName(name);
   }
 
-  @UseGuards(JwtGuard)
-  @Get()
+  @Get('platform/:id')
+  getGamesByPlatform(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('skip', ParseIntPipe) skip?: number,
+    @Query('take', ParseIntPipe) take?: number,
+  ) {
+    return this.gameService.getGamesByPlatform(id, skip, take);
+  }
+
+  @Get('all/:platform')
   getAllGames(
+    @Param('platform') platform: string,
     @Query('skip', ParseIntPipe) skip: number,
     @Query('take', ParseIntPipe) take: number,
   ) {
-    return this.gameService.getAllGames(skip, take);
+    return this.gameService.getAllGames(platform, skip, take);
   }
 
   /*@UseGuards(JwtGuard, AdminRoleGuard)*/
