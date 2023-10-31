@@ -1,7 +1,11 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { getUser } from 'src/auth/decorator/get-user.decorator';
-import { AddGameToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
+import {
+  AddGameToCollectionDto,
+  AddPlatformToCollectionDto,
+  CreateCollectionDto,
+} from './dto/collection.dto';
 import { CollectionService } from './collection.service';
 import { JwtGuard } from '../auth/guard';
 
@@ -25,9 +29,19 @@ export class CollectionController {
     return await this.collectionService.getCollectionById(id);
   }
 
+  @UseGuards(JwtGuard)
   @Post('addGame')
   async addGameToCollection(@getUser() userId: string, @Body() dto: AddGameToCollectionDto) {
     return await this.collectionService.addGameToCollection(userId, dto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('addPlatform')
+  async addPlatformToCollection(
+    @getUser() userId: string,
+    @Body() dto: AddPlatformToCollectionDto,
+  ) {
+    return await this.collectionService.addPlatformToCollection(userId, dto);
   }
 
   @UseGuards(JwtGuard)

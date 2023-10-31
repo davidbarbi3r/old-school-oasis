@@ -74,8 +74,8 @@ model Collection {
   userId String
   user   User   @relation(fields: [userId], references: [id])
 
-  games        GameItem[]
-  PlatformItem PlatformItem[]
+  gamesItems     GameItem[]
+  PlatformsItems PlatformItem[]
 
   @@map("collections")
 }

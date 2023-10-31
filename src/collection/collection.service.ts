@@ -1,7 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
-import { AddGameToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
-import { CompletedItem, GameItem, GameState, ItemCondition, WorkingState } from '@prisma/client';
+import {
+  AddGameToCollectionDto,
+  AddPlatformToCollectionDto,
+  CreateCollectionDto,
+} from './dto/collection.dto';
+import { CompletedItem, ItemCondition, WorkingState } from '@prisma/client';
 
 @Injectable()
 export class CollectionService {
@@ -31,6 +35,10 @@ export class CollectionService {
     const collections = await this.prisma.collection.findMany({
       where: {
         userId,
+      },
+      include: {
+        gamesItems: true,
+        PlatformsItems: true,
       },
     });
     if (collections.length === 0) {
@@ -100,5 +108,46 @@ export class CollectionService {
     });
 
     return game;
+  }
+
+  async addPlatformToCollection(userId: string, dto: AddPlatformToCollectionDto) {
+    const collections = await this.prisma.collection.findMany({
+      where: {
+        userId: userId,
+      },
+    });
+
+    const platformStateDefault = {
+      working: WorkingState.working,
+      completed: CompletedItem.itemOnly,
+      condition: ItemCondition.good,
+      name: '',
+      description: '',
+    };
+
+    const platform = await this.prisma.platformItem.create({
+      data: {
+        state: {
+          create: platformStateDefault,
+        },
+        platform: {
+          connect: {
+            id: dto.platformId,
+          },
+        },
+        collection: {
+          connect: {
+            id: collections[0].id,
+          },
+        },
+        version: {
+          connect: {
+            id: dto.versionId,
+          },
+        },
+      },
+    });
+
+    return platform;
   }
 }

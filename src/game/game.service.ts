@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
 import { CreateGameDto, UpdateGameDto } from './dto';
 import { IgdbService } from '../igdb/igdb.service';
+import { IMostCollectedGame } from './types';
 
 @Injectable()
 export class GameService {
@@ -36,7 +37,6 @@ export class GameService {
     // }
 
     const igdbGames = await this.igdb.searchIgdbGames(name);
-    console.log('igdbGames', igdbGames);
     if (igdbGames.length === 0) {
       throw new NotFoundException(`No games found`);
     }
@@ -97,6 +97,74 @@ export class GameService {
       if (!existingGame) {
         await this.createGame(game);
       }
+    }
+
+    return games;
+  }
+
+  async getTopCollectedGames(platform?: string, limit?: string) {
+    const take = limit ? parseInt(limit) : 5;
+    const platformId = platform ? parseInt(platform) : null;
+
+    let games: IMostCollectedGame[];
+
+    if (platformId) {
+      games = await this.prisma
+        .$queryRaw`SELECT COUNT(gi."gameId")::integer AS collection_count, gi."gameId" AS game_id, gi."platformId" AS platform_id, platform.name AS platform_name, game.name AS game_name
+                   FROM game_items gi
+                            JOIN "Platform" platform ON gi."platformId" = platform.id
+                            JOIN games game ON gi."gameId" = game.id
+                   WHERE gi."platformId" = ${platformId}
+                   GROUP BY gi."gameId", gi."platformId", platform.name, game.name
+                   ORDER BY collection_count DESC
+                   LIMIT ${take};`;
+    } else {
+      games = await this.prisma
+        .$queryRaw`SELECT COUNT(gi."gameId")::integer AS collection_count, gi."gameId" AS game_id, gi."platformId" AS platform_id, platform.name AS platform_name, game.name AS game_name
+                   FROM game_items gi
+                            JOIN "Platform" platform ON gi."platformId" = platform.id
+                            JOIN games game ON gi."gameId" = game.id
+                   GROUP BY gi."gameId", gi."platformId", platform.name, game.name
+                   ORDER BY collection_count DESC
+                   LIMIT ${take};`;
+    }
+    if (!games.length) {
+      throw new NotFoundException(`No games found`);
+    }
+
+    return games;
+  }
+
+  async getTopRatedGames(platform?: string, limit?: string) {
+    const take = limit ? parseInt(limit) : 5;
+    const platformId = platform ? parseInt(platform) : null;
+
+    const games = await this.prisma.game.findMany({
+      where: {
+        rating: {
+          not: null,
+        },
+        platforms: platformId
+          ? {
+              some: {
+                platform: {
+                  id: platformId,
+                  generation: {
+                    lt: 5,
+                  },
+                },
+              },
+            }
+          : undefined,
+      },
+      take: take,
+      orderBy: {
+        rating: 'desc',
+      },
+    });
+
+    if (!games.length) {
+      throw new NotFoundException(`No games found`);
     }
 
     return games;

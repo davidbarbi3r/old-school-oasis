@@ -38,7 +38,7 @@ export class IgdbService {
         'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
         Authorization: `Bearer ${this.igdbAuth.access_token}`,
       },
-      body: `search "${name}"; fields name, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; limit 20; `,
+      body: `search "${name}"; fields name, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; limit 100; `,
     });
 
     const data = await response.json();
@@ -149,9 +149,9 @@ export class IgdbService {
         'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
         Authorization: `Bearer ${this.igdbAuth.access_token}`,
       },
-      body: `fields name, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; where platforms = ${platformId}; limit ${
-        take || 20
-      }; offset ${skip || 0};`,
+      body: `fields name, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; where platforms = ${platformId}; 
+      limit ${take || 20}; 
+      offset ${skip || 0};`,
     });
 
     if (response.status !== 200) {

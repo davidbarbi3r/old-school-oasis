@@ -14,9 +14,8 @@ import { JwtGuard } from '../auth/guard';
 import { GameService } from './game.service';
 import { CreateGameDto, UpdateGameDto } from './dto';
 import { AdminRoleGuard } from 'src/user/guard';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiBearerAuth()
 @ApiTags('games')
 @Controller('games')
 export class GameController {
@@ -57,6 +56,16 @@ export class GameController {
     @Query('take', ParseIntPipe) take: number,
   ) {
     return this.gameService.getAllGames(platform, skip, take);
+  }
+
+  @Get('/mostCollected/:platform')
+  getTopCollectedGames(@Param('platform') platform?: string, @Query('limit') limit?: string) {
+    return this.gameService.getTopCollectedGames(platform, limit);
+  }
+
+  @Get('/bestRated/:platform')
+  getTopRatedGames(@Param('platform') platform?: string, @Query('limit') limit?: string) {
+    return this.gameService.getTopRatedGames(platform, limit);
   }
 
   /*@UseGuards(JwtGuard, AdminRoleGuard)*/

@@ -15,3 +15,11 @@ export class AddGameToCollectionDto {
   @IsNumber()
   platformId: number;
 }
+
+export class AddPlatformToCollectionDto {
+  @IsNumber()
+  platformId: number;
+
+  @IsNumber()
+  versionId: number;
+}
