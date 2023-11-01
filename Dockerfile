@@ -1,5 +1,5 @@
 # Base image
-FROM node:18
+FROM node:18-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -10,11 +10,17 @@ COPY package*.json ./
 # Install app dependencies
 RUN npm install
 
+# Copy prisma directory
+COPY prisma/ prisma/
+
+# Generate Prisma client
+RUN npx prisma generate
+
 # Bundle app source
 COPY . .
 
 # Expose the port the app runs in
-EXPOSE 3000
+EXPOSE 3003
 
 # Creates a "dist" folder with the production build
 RUN npm run build
