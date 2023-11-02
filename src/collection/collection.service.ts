@@ -37,8 +37,19 @@ export class CollectionService {
         userId,
       },
       include: {
-        gamesItems: true,
-        PlatformsItems: true,
+        gamesItems: {
+          include: {
+            game: true,
+            state: true,
+          },
+        },
+        PlatformsItems: {
+          include: {
+            platform: true,
+            version: true,
+            state: true,
+          },
+        },
       },
     });
     if (collections.length === 0) {
