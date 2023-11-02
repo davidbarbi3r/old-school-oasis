@@ -1,15 +1,51 @@
-version: '3.8'
+version: '3'
 
 services:
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - my_network
 
-  postgres-dev: 
+  oasis:
+    container_name: oasis
+    image: ghcr.io/davidbarbi3r/oasis:latest  # Pull the image from the GitHub registry
+    environment:
+      PORT: ${PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      TWITCH_CLIENT_ID: ${TWITCH_CLIENT_ID}
+      TWITCH_SECRET: ${TWITCH_SECRET}
+    restart: always
+    ports:
+      - 3003:3003
+    networks:
+      - my_network
+
+  postgres: 
     image: postgres:15-alpine
     restart: always
+    container_name: postgres
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: gnark
       POSTGRES_DB: oasis
     ports:
       - 5432:5432
+    networks:
+      - my_network
     volumes:
         - ./postgres-data:/var/lib/postgresql/data
+  # Add more containers below (nginx, postgres, etc.)
+
+# Define a network, which allows containers to communicate
+# with each other, by using their container name as a hostname
+networks:
+  my_network:
