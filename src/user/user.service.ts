@@ -24,7 +24,7 @@ export class UserService {
     return user;
   }
 
-  /*async getUserByUsername(username: string) {
+  async getUserByUsername(username: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         userName: username,
@@ -32,14 +32,18 @@ export class UserService {
       include: {
         collections: {
           include: {
-            games: {
+            gamesItems: {
               include: {
                 game: true,
               },
             },
-            PlatformItem: {
+            PlatformsItems: {
               include: {
-                platform: true,
+                platform: {
+                  include: {
+                    versions: true,
+                  },
+                },
               },
             },
           },
@@ -53,7 +57,7 @@ export class UserService {
 
     delete user.hash;
     return user;
-  }*/
+  }
 
   async getAllUsers(skip?: number, take?: number) {
     // 👇 we offset pagination, which is simpler than cursor pagination but less efficient
