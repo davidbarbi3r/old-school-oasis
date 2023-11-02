@@ -28,7 +28,7 @@ async function bootstrap() {
       whitelist: true, // remove unknown properties from DTOs
     }),
   );
-  await app.listen(port);
+  await app.listen(port, 'localhost');
   Logger.log(`Server running on ${await app.getUrl()})`, 'Bootstrap');
 }
 bootstrap();
