@@ -22,6 +22,9 @@ COPY . .
 # Expose the port the app runs in
 EXPOSE 3003
 
+# Set environment variables to production
+ENV NODE_ENV production
+
 # Creates a "dist" folder with the production build
 RUN npm run build
 
