@@ -13,6 +13,18 @@ export class GameService {
       where: {
         id: id,
       },
+      include: {
+        platforms: {
+          include: {
+            platform: true,
+          },
+        },
+        GameItem: {
+          include: {
+            platform: true,
+          },
+        },
+      },
     });
 
     if (!game) {
@@ -56,13 +68,13 @@ export class GameService {
     return igdbGames;
   }
 
-  async getAllGames(platform: string, skip?: number, take?: number) {
+  async getAllGames(platformId: number, skip?: number, take?: number) {
     const games = await this.prisma.game.findMany({
       where: {
         platforms: {
           some: {
             platform: {
-              name: platform,
+              id: platformId,
             },
           },
         },

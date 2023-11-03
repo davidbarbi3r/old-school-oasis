@@ -25,7 +25,6 @@ export class GameController {
   @ApiResponse({ status: 200, description: 'Return game by id' })
   @ApiResponse({ status: 404, description: 'Game not found' })
   @ApiResponse({ status: 403, description: 'Unauthorized' })
-  @UseGuards(JwtGuard)
   @Get(':id')
   getGameById(@Param('id', ParseIntPipe) id: number) {
     return this.gameService.getGameById(id);
@@ -49,13 +48,13 @@ export class GameController {
     return this.gameService.getGamesByPlatform(id, skip, take);
   }
 
-  @Get('all/:platform')
+  @Get('all/:platformId')
   getAllGames(
-    @Param('platform') platform: string,
+    @Param('platformId', ParseIntPipe) platformId: number,
     @Query('skip', ParseIntPipe) skip: number,
     @Query('take', ParseIntPipe) take: number,
   ) {
-    return this.gameService.getAllGames(platform, skip, take);
+    return this.gameService.getAllGames(platformId, skip, take);
   }
 
   @Get('/mostCollected/:platform')
