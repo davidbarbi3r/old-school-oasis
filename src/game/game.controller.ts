@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Delete,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
 import { GameService } from './game.service';
 import { CreateGameDto, UpdateGameDto } from './dto';
@@ -19,7 +8,8 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @ApiTags('games')
 @Controller('games')
 export class GameController {
-  constructor(private gameService: GameService) {}
+  constructor(private gameService: GameService) {
+  }
 
   @ApiOperation({ summary: 'Get game by id' })
   @ApiResponse({ status: 200, description: 'Return game by id' })
@@ -37,6 +27,11 @@ export class GameController {
   @Get('search/:name')
   searchGamesByName(@Param('name') name: string) {
     return this.gameService.getGamesByName(name);
+  }
+
+  @Get('search/:name/:platform')
+  searchGamesByNameAndPlatform(@Param('name') name: string, @Param('platform', ParseIntPipe) platformId: number) {
+    return this.gameService.getGamesByNameAndPlatform(name, platformId);
   }
 
   @Get('platform/:id')

@@ -6,7 +6,8 @@ import { IMostCollectedGame } from './types';
 
 @Injectable()
 export class GameService {
-  constructor(private prisma: PrismaService, private igdb: IgdbService) {}
+  constructor(private prisma: PrismaService, private igdb: IgdbService) {
+  }
 
   async getGameById(id: number) {
     const game = await this.prisma.game.findUnique({
@@ -68,6 +69,30 @@ export class GameService {
     // return igdbGames;
   }
 
+  async getGamesByNameAndPlatform(name: string, platformId: number) {
+    const games = await this.prisma.game.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+        platforms: {
+          some: {
+            platform: {
+              id: platformId,
+            },
+          },
+        },
+      },
+    });
+
+    if (games.length === 0) {
+      throw new NotFoundException(`No games found`);
+    }
+
+    return games;
+  }
+
   async getAllGames(platformId: number, skip?: number, take?: number) {
     const games = await this.prisma.game.findMany({
       where: {
@@ -122,23 +147,29 @@ export class GameService {
 
     if (platformId) {
       games = await this.prisma
-        .$queryRaw`SELECT COUNT(gi."gameId")::integer AS collection_count, gi."gameId" AS game_id, gi."platformId" AS platform_id, platform.name AS platform_name, game.name AS game_name
+        .$queryRaw`SELECT COUNT(gi."gameId")::integer AS collection_count, gi."gameId" AS game_id,
+                          gi."platformId" AS platform_id,
+                          platform.name   AS platform_name,
+                          game.name       AS game_name
                    FROM game_items gi
                             JOIN "Platform" platform ON gi."platformId" = platform.id
                             JOIN games game ON gi."gameId" = game.id
                    WHERE gi."platformId" = ${platformId}
                    GROUP BY gi."gameId", gi."platformId", platform.name, game.name
                    ORDER BY collection_count DESC
-                   LIMIT ${take};`;
+                       LIMIT ${take};`;
     } else {
       games = await this.prisma
-        .$queryRaw`SELECT COUNT(gi."gameId")::integer AS collection_count, gi."gameId" AS game_id, gi."platformId" AS platform_id, platform.name AS platform_name, game.name AS game_name
+        .$queryRaw`SELECT COUNT(gi."gameId")::integer AS collection_count, gi."gameId" AS game_id,
+                          gi."platformId" AS platform_id,
+                          platform.name   AS platform_name,
+                          game.name       AS game_name
                    FROM game_items gi
                             JOIN "Platform" platform ON gi."platformId" = platform.id
                             JOIN games game ON gi."gameId" = game.id
                    GROUP BY gi."gameId", gi."platformId", platform.name, game.name
                    ORDER BY collection_count DESC
-                   LIMIT ${take};`;
+                       LIMIT ${take};`;
     }
     if (!games.length) {
       throw new NotFoundException(`No games found`);
@@ -158,15 +189,15 @@ export class GameService {
         },
         platforms: platformId
           ? {
-              some: {
-                platform: {
-                  id: platformId,
-                  generation: {
-                    lt: 5,
-                  },
+            some: {
+              platform: {
+                id: platformId,
+                generation: {
+                  lt: 5,
                 },
               },
-            }
+            },
+          }
           : undefined,
       },
       take: take,
