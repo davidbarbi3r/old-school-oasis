@@ -1,15 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
-import {
-  AddGameToCollectionDto,
-  AddPlatformToCollectionDto,
-  CreateCollectionDto,
-} from './dto/collection.dto';
+import { AddGameToCollectionDto, AddPlatformToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
 import { CompletedItem, ItemCondition, WorkingState } from '@prisma/client';
 
 @Injectable()
 export class CollectionService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+  }
 
   async createCollection(userId: string, dto: CreateCollectionDto) {
     const collection = await this.prisma.collection.create({
@@ -161,5 +158,25 @@ export class CollectionService {
     });
 
     return platform;
+  }
+
+  async deletePlatformFromCollection(id: string) {
+    const platform = await this.prisma.platformItem.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return platform;
+  }
+
+  async deleteGameFromCollection(id: string) {
+    const game = await this.prisma.gameItem.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return game;
   }
 }
