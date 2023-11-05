@@ -43,14 +43,13 @@ export class CollectionController {
 
   @UseGuards(JwtGuard)
   @Delete('delete/platform/:id')
-  async deletePlatformFromCollection(@Param() id: string) {
-    console.log(id);
+  async deletePlatformFromCollection(@Param('id') id: string) {
     return await this.collectionService.deletePlatformFromCollection(id);
   }
 
   @UseGuards(JwtGuard)
   @Delete('delete/game/:id')
-  async deleteGameFromCollection(@Param() id: string) {
+  async deleteGameFromCollection(@Param('id') id: string) {
     return await this.collectionService.deleteGameFromCollection(id);
   }
 
