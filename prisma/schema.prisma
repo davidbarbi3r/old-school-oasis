@@ -122,7 +122,7 @@ model GamesOnPlatforms {
   platform   Platform   @relation(fields: [platformId], references: [id])
   platformId Int // relation scalar field (used in the `@relation` attribute above)
   assignedAt DateTime   @default(now())
-  GameItem   GameItem[]
+  gameItems  GameItem[]
 
   @@id([gameId, platformId])
 }
