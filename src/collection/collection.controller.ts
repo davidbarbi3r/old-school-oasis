@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { getUser } from 'src/auth/decorator/get-user.decorator';
 import { AddGameToCollectionDto, AddPlatformToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
@@ -22,7 +22,7 @@ export class CollectionController {
   }
 
   @Get(':id')
-  async getCollectionById(@Query() id: string) {
+  async getCollectionById(@Param() id: string) {
     return await this.collectionService.getCollectionById(id);
   }
 
@@ -43,13 +43,14 @@ export class CollectionController {
 
   @UseGuards(JwtGuard)
   @Delete('delete/platform/:id')
-  async deletePlatformFromCollection(@Query() id: string) {
+  async deletePlatformFromCollection(@Param() id: string) {
+    console.log(id);
     return await this.collectionService.deletePlatformFromCollection(id);
   }
 
   @UseGuards(JwtGuard)
   @Delete('delete/game/:id')
-  async deleteGameFromCollection(@Query() id: string) {
+  async deleteGameFromCollection(@Param() id: string) {
     return await this.collectionService.deleteGameFromCollection(id);
   }
 
