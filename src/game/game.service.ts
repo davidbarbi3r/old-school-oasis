@@ -35,37 +35,37 @@ export class GameService {
   }
 
   async getGamesByName(name: string) {
-    // const games = await this.prisma.game.findMany({
-    //   where: {
-    //     name: {
-    //       contains: name,
-    //       mode: 'insensitive',
-    //     },
-    //   },
-    // });
-
-    // if (games.length > 0) {
-    //   return games;
-    // }
-
-    const igdbGames = await this.igdb.searchIgdbGames(name);
-    if (igdbGames.length === 0) {
-      throw new NotFoundException(`No games found`);
-    }
-
-    for await (const game of igdbGames) {
-      const existingGame = await this.prisma.game.findUnique({
-        where: {
-          id: game.id,
+    const games = await this.prisma.game.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
         },
-      });
+      },
+    });
 
-      if (!existingGame && game.platforms) {
-        await this.createGame(game);
-      }
+    if (games.length > 0) {
+      return games;
     }
 
-    return igdbGames;
+    // const igdbGames = await this.igdb.searchIgdbGames(name);
+    // if (igdbGames.length === 0) {
+    //   throw new NotFoundException(`No games found`);
+    // }
+    //
+    // for await (const game of igdbGames) {
+    //   const existingGame = await this.prisma.game.findUnique({
+    //     where: {
+    //       id: game.id,
+    //     },
+    //   });
+    //
+    //   if (!existingGame && game.platforms) {
+    //     await this.createGame(game);
+    //   }
+    // }
+    //
+    // return igdbGames;
   }
 
   async getAllGames(platformId: number, skip?: number, take?: number) {
