@@ -194,16 +194,12 @@ export class CollectionService {
   }
 
   async updateGameItemState(id: string, dto: GameState) {
-    const gameState = await this.prisma.gameItem.update({
+    const gameState = await this.prisma.gameState.update({
       where: {
         id: id,
       },
       data: {
-        state: {
-          update: {
-            ...dto,
-          },
-        },
+        ...dto,
       },
     });
 
@@ -215,16 +211,12 @@ export class CollectionService {
   }
 
   async updatePlatformItemState(id: string, dto: PlatformState) {
-    const platformState = await this.prisma.platformItem.update({
+    const platformState = await this.prisma.platformState.update({
       where: {
         id: id,
       },
       data: {
-        state: {
-          update: {
-            ...dto,
-          },
-        },
+        ...dto,
       },
     });
 
