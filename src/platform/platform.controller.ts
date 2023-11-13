@@ -43,13 +43,13 @@ export class PlatformController {
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)
-  @Post('create')
+  @Post()
   createPlatform(@Body() dto: CreatePlatformDto) {
     return this.platformService.createPlatform(dto);
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)
-  @Put('update/:id')
+  @Put(':id')
   updatePlatform(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdatePlatformDto) {
     return this.platformService.updatePlatform(id, dto);
   }

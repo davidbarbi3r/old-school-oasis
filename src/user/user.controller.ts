@@ -57,13 +57,13 @@ export class UserController {
 
   //ok
   @UseGuards(JwtGuard)
-  @Put('update/me') // put is used to update the whole object
+  @Put('me') // put is used to update the whole object
   updateMe(@getUser() { id }: User, @Body() updateDto: UpdateUserDto) {
     return this.userService.updateProfile(id, updateDto);
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)
-  @Put('update/:id') // put is used to update the whole object
+  @Put(':id') // put is used to update the whole object
   updateUser(@Param('id') id: string, @Body() updateDto: UpdateUserDto) {
     return this.userService.updateProfile(id, updateDto);
   }

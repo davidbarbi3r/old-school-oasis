@@ -63,19 +63,19 @@ export class GameController {
   }
 
   /*@UseGuards(JwtGuard, AdminRoleGuard)*/
-  @Post('create')
+  @Post()
   createGame(@Body() dto: CreateGameDto) {
     return this.gameService.createGame(dto);
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)
-  @Put('update/:id')
+  @Put(':id')
   updateGame(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateGameDto) {
     return this.gameService.updateGame(id, dto);
   }
 
   @UseGuards(JwtGuard, AdminRoleGuard)
-  @Delete('delete/:id')
+  @Delete(':id')
   deleteGame(@Param('id', ParseIntPipe) id: number) {
     return this.gameService.deleteGame(id);
   }
