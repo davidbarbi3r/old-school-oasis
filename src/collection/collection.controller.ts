@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { getUser } from 'src/auth/decorator/get-user.decorator';
-import { AddGameToCollectionDto, AddPlatformToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
+import {
+  AddGameToCollectionDto,
+  AddPlatformToCollectionDto,
+  CreateCollectionDto,
+} from './dto/collection.dto';
 import { CollectionService } from './collection.service';
 import { JwtGuard } from '../auth/guard';
+import { GameState } from '@prisma/client';
 
 @ApiTags('collections')
 @Controller('collections')
@@ -27,13 +32,13 @@ export class CollectionController {
   }
 
   @UseGuards(JwtGuard)
-  @Post('addGame')
+  @Post('game')
   async addGameToCollection(@getUser() userId: string, @Body() dto: AddGameToCollectionDto) {
     return await this.collectionService.addGameToCollection(userId, dto);
   }
 
   @UseGuards(JwtGuard)
-  @Post('addPlatform')
+  @Post('platform')
   async addPlatformToCollection(
     @getUser() userId: string,
     @Body() dto: AddPlatformToCollectionDto,
@@ -42,15 +47,33 @@ export class CollectionController {
   }
 
   @UseGuards(JwtGuard)
-  @Delete('delete/platform/:id')
+  @Delete('platform/:id')
   async deletePlatformFromCollection(@Param('id') id: string) {
     return await this.collectionService.deletePlatformFromCollection(id);
   }
 
   @UseGuards(JwtGuard)
-  @Delete('delete/game/:id')
+  @Delete('game/:id')
   async deleteGameFromCollection(@Param('id') id: string) {
     return await this.collectionService.deleteGameFromCollection(id);
+  }
+
+  /*@UseGuards(JwtGuard)
+  @Put('game/:id')
+  async updateGameInCollection(@Param('id') id: string, @Body() dto: AddGameToCollectionDto) {
+    return await this.collectionService.updateGameInCollection(id, dto);
+  }*/
+
+  @UseGuards(JwtGuard)
+  @Put('game/state/:id')
+  async updateGameItemState(@Param('id') id: string, @Body() dto: GameState) {
+    return await this.collectionService.updateGameItemState(id, dto);
+  }
+
+  @UseGuards(JwtGuard)
+  @Put('platform/state/:id')
+  async updatePlatformItemState(@Param('id') id: string, @Body() dto: GameState) {
+    return await this.collectionService.updatePlatformItemState(id, dto);
   }
 
   @UseGuards(JwtGuard)

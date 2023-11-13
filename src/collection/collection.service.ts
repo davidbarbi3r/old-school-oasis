@@ -1,12 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prismaModule/prisma.service';
-import { AddGameToCollectionDto, AddPlatformToCollectionDto, CreateCollectionDto } from './dto/collection.dto';
-import { CompletedItem, ItemCondition, WorkingState } from '@prisma/client';
+import {
+  AddGameToCollectionDto,
+  AddPlatformToCollectionDto,
+  CreateCollectionDto,
+} from './dto/collection.dto';
+import {
+  CompletedItem,
+  GameState,
+  ItemCondition,
+  PlatformState,
+  WorkingState,
+} from '@prisma/client';
 
 @Injectable()
 export class CollectionService {
-  constructor(private prisma: PrismaService) {
-  }
+  constructor(private prisma: PrismaService) {}
 
   async createCollection(userId: string, dto: CreateCollectionDto) {
     const collection = await this.prisma.collection.create({
@@ -177,6 +186,52 @@ export class CollectionService {
       },
     });
 
+    if (!game) {
+      throw new NotFoundException('No game found');
+    }
+
     return game;
+  }
+
+  async updateGameItemState(id: string, dto: GameState) {
+    const gameState = await this.prisma.gameItem.update({
+      where: {
+        id: id,
+      },
+      data: {
+        state: {
+          update: {
+            ...dto,
+          },
+        },
+      },
+    });
+
+    if (!gameState) {
+      throw new NotFoundException('No game found');
+    }
+
+    return gameState;
+  }
+
+  async updatePlatformItemState(id: string, dto: PlatformState) {
+    const platformState = await this.prisma.platformItem.update({
+      where: {
+        id: id,
+      },
+      data: {
+        state: {
+          update: {
+            ...dto,
+          },
+        },
+      },
+    });
+
+    if (!platformState) {
+      throw new NotFoundException('No platform found');
+    }
+
+    return platformState;
   }
 }
