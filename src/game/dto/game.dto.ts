@@ -11,6 +11,9 @@ export class CreateGameDto {
   description: string;
 
   @IsString()
+  category: string;
+
+  @IsString()
   storyLine: string;
 
   @IsString()

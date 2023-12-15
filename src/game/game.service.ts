@@ -6,8 +6,7 @@ import { IMostCollectedGame } from './types';
 
 @Injectable()
 export class GameService {
-  constructor(private prisma: PrismaService, private igdb: IgdbService) {
-  }
+  constructor(private prisma: PrismaService, private igdb: IgdbService) {}
 
   async getGameById(id: number) {
     const game = await this.prisma.game.findUnique({
@@ -36,37 +35,37 @@ export class GameService {
   }
 
   async getGamesByName(name: string) {
-    const games = await this.prisma.game.findMany({
-      where: {
-        name: {
-          contains: name,
-          mode: 'insensitive',
-        },
-      },
-    });
+    // const games = await this.prisma.game.findMany({
+    //   where: {
+    //     name: {
+    //       contains: name,
+    //       mode: 'insensitive',
+    //     },
+    //   },
+    // });
 
-    if (games.length > 0) {
-      return games;
+    // if (games.length > 0) {
+    //   return games;
+    // }
+
+    const igdbGames = await this.igdb.searchIgdbGames(name);
+    if (igdbGames.length === 0) {
+      throw new NotFoundException(`No games found`);
     }
 
-    // const igdbGames = await this.igdb.searchIgdbGames(name);
-    // if (igdbGames.length === 0) {
-    //   throw new NotFoundException(`No games found`);
-    // }
-    //
-    // for await (const game of igdbGames) {
-    //   const existingGame = await this.prisma.game.findUnique({
-    //     where: {
-    //       id: game.id,
-    //     },
-    //   });
-    //
-    //   if (!existingGame && game.platforms) {
-    //     await this.createGame(game);
-    //   }
-    // }
-    //
-    // return igdbGames;
+    for await (const game of igdbGames) {
+      const existingGame = await this.prisma.game.findUnique({
+        where: {
+          id: game.id,
+        },
+      });
+
+      if (!existingGame && game.platforms) {
+        await this.createGame(game);
+      }
+    }
+
+    return igdbGames;
   }
 
   async getGamesByNameAndPlatform(name: string, platformId: number) {
@@ -189,15 +188,15 @@ export class GameService {
         },
         platforms: platformId
           ? {
-            some: {
-              platform: {
-                id: platformId,
-                generation: {
-                  lt: 5,
+              some: {
+                platform: {
+                  id: platformId,
+                  generation: {
+                    lt: 5,
+                  },
                 },
               },
-            },
-          }
+            }
           : undefined,
       },
       take: take,

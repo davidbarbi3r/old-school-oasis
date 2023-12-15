@@ -38,7 +38,7 @@ export class IgdbService {
         'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
         Authorization: `Bearer ${this.igdbAuth.access_token}`,
       },
-      body: `search "${name}"; fields name, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; limit 100; `,
+      body: `search "${name}"; fields name, category, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; limit 100; `,
     });
 
     const data = await response.json();
@@ -46,6 +46,7 @@ export class IgdbService {
       return {
         id: game.id,
         name: game.name,
+        category: game.category,
         description: game.summary ? game.summary : null,
         storyLine: game.storyline ? game.storyline : null,
         rating: game.rating ? game.rating : null,
@@ -149,7 +150,7 @@ export class IgdbService {
         'Client-ID': this.config.get<string>('TWITCH_CLIENT_ID'),
         Authorization: `Bearer ${this.igdbAuth.access_token}`,
       },
-      body: `fields name, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; where platforms = ${platformId}; 
+      body: `fields name, category, cover.url, platforms.name, first_release_date, websites.url, summary, storyline, genres.name, rating, screenshots.url; where platforms = ${platformId}; 
       limit ${take || 20}; 
       offset ${skip || 0};`,
     });
@@ -164,6 +165,7 @@ export class IgdbService {
       return {
         id: game.id,
         name: game.name,
+        category: game.category,
         description: game.summary ? game.summary : null,
         storyLine: game.storyline ? game.storyline : null,
         rating: game.rating ? game.rating : null,
