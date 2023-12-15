@@ -10,8 +10,8 @@ export class CreateGameDto {
   @IsString()
   description: string;
 
-  @IsString()
-  category: string;
+  @IsInt()
+  category: number;
 
   @IsString()
   storyLine: string;

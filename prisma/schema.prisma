@@ -85,7 +85,7 @@ model Game {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   name           String
-  category       String?
+  category       Int?
   description    String?
   storyLine      String?
   rating         Float?
