@@ -35,6 +35,8 @@ export class UserService {
             gamesItems: {
               include: {
                 game: true,
+                platform: true,
+                state: true,
               },
             },
             PlatformsItems: {
