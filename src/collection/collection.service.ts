@@ -45,7 +45,11 @@ export class CollectionService {
       include: {
         gamesItems: {
           include: {
-            game: true,
+            game: {
+              include: {
+                platforms: true,
+              },
+            },
             state: true,
             platform: true,
           },
